@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!-- Generated 31-may-2018 23:27:07 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+
+<class
+    name="Modelo.Credenciales"
+    table="CREDENCIALES"
+    schema="USUARIO"
+    optimistic-lock="version"
+>
+
+    <composite-id
+		name="id"
+        class="Modelo.CredencialesId"
+    >		
+	        <key-property name="usuario" type="string">
+<column name="USUARIO" length="100" />
+	        </key-property>
+	        <key-property name="password" type="string">
+<column name="PASSWORD" length="100" />
+	        </key-property>
+	        <key-property name="descripcion" type="string">
+<column name="DESCRIPCION" length="100" />
+	        </key-property>
+    </composite-id>	
+
+
+
+
+
+</class>
+
+</hibernate-mapping>

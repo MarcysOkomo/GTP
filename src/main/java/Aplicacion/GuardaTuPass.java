@@ -5,15 +5,14 @@
  */
 package Aplicacion;
 
-import Clases.ManejaCredencales;
-import Clases.ManejaUsuario;
-import Modelo.Credenciales;
-import Modelo.CredencialesId;
-import Modelo.Usuarioapp;
+import Clases.*;
+import Modelo.*;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -90,6 +89,7 @@ public class GuardaTuPass extends javax.swing.JFrame {
                     //Registramos la contraseña de acceso a la base de datos
                     Usuarioapp usuario = new Usuarioapp();
                     usuario.setId( 12345 ); //Solo se almacena una vez
+                    pass2 = cifradoMD5.Encriptar(pass2);
                     usuario.setPassword(pass2);
                     manejaUsuario.Registrarse(usuario);
 
@@ -125,8 +125,8 @@ public class GuardaTuPass extends javax.swing.JFrame {
         try {
             //Convertimos el password a string
             String pass = new String(passAcceso.getPassword());
-            //Cosultamos la clave en la base de datos
-            
+            //Encriptamos la clave de acceso
+            pass = cifradoMD5.Encriptar(pass);
             //si existe accedemos a la vista inicial
             if ( manejaUsuario.Acceder(pass) == 1) {
                 pnlAcceso.setVisible(false);
@@ -176,6 +176,9 @@ public class GuardaTuPass extends javax.swing.JFrame {
             
             if( !usuario.equals("") && !pass.equals("") && !descripcion.equals("") ){
                 
+                //Encriptamos la clave
+                pass = cifradoMD5.Encriptar(pass);
+                
                 CredencialesId crdID = new CredencialesId();
                 crdID.setUsuario(usuario);
                 crdID.setPassword(pass);
@@ -205,7 +208,7 @@ public class GuardaTuPass extends javax.swing.JFrame {
         }
     }
     
-    public void ListarClaves(){
+    public void ListarClaves() throws Exception {
         LimpiarLista();
         String[] fila = new String[3];
         //Obtenemos las claves de la base de datos
@@ -213,13 +216,11 @@ public class GuardaTuPass extends javax.swing.JFrame {
         
         for (Credenciales crd : crds) {
             fila[0] = crd.getId().getUsuario();
-            fila[1] = crd.getId().getPassword();
+            fila[1] = cifradoMD5.Desencriptar(crd.getId().getPassword());
             fila[2] = crd.getId().getDescripcion();
             modelo.addRow(fila);
             tblLista.setModel(modelo);
         }
-        
-        
         
     }
     
@@ -1161,7 +1162,11 @@ public class GuardaTuPass extends javax.swing.JFrame {
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
         pnlPrincipal.setVisible(false);
         pnlLClaves.setVisible(true);
-        ListarClaves();
+        try {
+            ListarClaves();
+        } catch (Exception ex) {
+            Logger.getLogger(GuardaTuPass.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_btnListarActionPerformed
 
